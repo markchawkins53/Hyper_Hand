@@ -27,18 +27,16 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
-
-	UPROPERTY()
+	
 	FVector PreviousLocation;
-
-	UPROPERTY()
 	FVector MoveInput;
 
-	UPROPERTY()
-	bool IsDodging;
+	bool CanMove;
 
-	UPROPERTY(EditAnywhere)
 	bool IsMoving;
+
+	FVector NewLocation;
+	bool IsDodging;
 
 	UFUNCTION()
 	void CheckIfMoving();
@@ -51,6 +49,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void PlayerDodge(float DodgeDistance, float PlayerSpeed);
+
+	void PlayerIsDodging();
 
 	UFUNCTION(BlueprintCallable)
 	void PlayerAim(float LookUpDownInput, float LookLeftRightInput);

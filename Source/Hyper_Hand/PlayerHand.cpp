@@ -9,10 +9,11 @@ APlayerHand::APlayerHand()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	MoveInput = FVector(0, 0, 0);
+	NewLocation = MoveInput = FVector(0, 0, 0);
 	PreviousLocation = GetActorLocation();
 
-	IsMoving = false;
+	CanMove = true;
+	IsMoving = IsDodging = false;
 }
 
 // Called when the game starts or when spawned
@@ -28,6 +29,9 @@ void APlayerHand::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	CheckIfMoving();
+
+	if (IsDodging)
+		PlayerIsDodging();
 }
 
 // Called to bind functionality to input
@@ -36,27 +40,27 @@ void APlayerHand::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-
+//====================================================================================
 /*Checks if Player is currently moving*/
 void APlayerHand::CheckIfMoving()
 {
 	if (PreviousLocation == GetActorLocation())
 		IsMoving = IsDodging = false;
 }
-
+//====================================================================================
 void APlayerHand::PlayerMoveInput(float MoveUpDownInput, float MoveLeftRightInput)
 {
 	MoveInput.X = MoveUpDownInput;
 	MoveInput.Y = MoveLeftRightInput;
 }
-
+//------------------------------------------------------------------------------------
 /*Moves the Player in the given directions*/
 void APlayerHand::PlayerMove(float PlayerSpeed)
 {
-	FVector OrigLocation = PreviousLocation = GetActorLocation();
-
-	if (IsDodging)
+	if (!CanMove)
 		return;
+
+	FVector OrigLocation = PreviousLocation = GetActorLocation();
 
 	if (!IsMoving)
 		IsMoving = true;
@@ -66,29 +70,31 @@ void APlayerHand::PlayerMove(float PlayerSpeed)
 
 	SetActorLocation(OrigLocation);
 }
-
+//====================================================================================
 void APlayerHand::PlayerDodge(float DodgeDistance, float PlayerSpeed)
 {
-	if (!IsDodging)
+	if (!IsDodging && (MoveInput.X != 0 || MoveInput.Y != 0))
 		IsDodging = true;
-	else if (IsDodging || (MoveInput.X == 0 && MoveInput.Y == 0))
+	else
 		return;
 
-	FVector NewLocation = GetActorLocation() + (MoveInput * DodgeDistance);
+	NewLocation = GetActorLocation() + (MoveInput * DodgeDistance);
 
-	while (true)
+	CanMove = false;
+}
+//------------------------------------------------------------------------------------
+void APlayerHand::PlayerIsDodging()
+{
+	SetActorLocation(FMath::Lerp(GetActorLocation(), NewLocation, .35f));
+
+	if (FMath::Abs(NewLocation.X - GetActorLocation().X) <= 100 &&
+		FMath::Abs(NewLocation.Y - GetActorLocation().Y) <= 100)
 	{
-		SetActorLocation ( FMath::Lerp(GetActorLocation(), NewLocation, .5f) * FApp::GetDeltaTime() );
-
-		if (FMath::Abs( NewLocation.X- GetActorLocation().X ) <= 100 &&
-			FMath::Abs( NewLocation.Y - GetActorLocation().Y ) <= 100)
-		{
-			IsDodging = false;
-			break;
-		}
+		IsDodging = false;
+		CanMove = true;
 	}
 }
-
+//====================================================================================
 /*Rotates the Player to the desired direction*/
 void APlayerHand::PlayerAim(float LookUpDownInput, float LookLeftRightInput)
 {
