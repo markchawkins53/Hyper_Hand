@@ -28,31 +28,49 @@ public:
 
 protected:
 	
+	//Movement Variables
 	FVector PreviousLocation;
 	FVector MoveInput;
 
 	bool CanMove;
-
 	bool IsMoving;
 
+	//Player Dodge Variables
 	FVector NewLocation;
 	bool IsDodging;
 
-	UFUNCTION()
-	void CheckIfMoving();
+	//Player Punching Variables
+	FVector OrigPunchStart;
+	FVector PunchEndHeight;
+	bool IsFastPunching;
+	bool IsHeavyPunching;
+	bool PullBack;
+	int CurrentPhase;
 
+	//Player Movement
 	UFUNCTION(BlueprintCallable)
 	void PlayerMoveInput(float MoveUpDownInput, float MoveLeftRightInput);
-
 	UFUNCTION(BlueprintCallable)
 	void PlayerMove(float PlayerSpeed);
+	void CheckIfMoving();
 
+	//Player Dodging
 	UFUNCTION(BlueprintCallable)
-	void PlayerDodge(float DodgeDistance, float PlayerSpeed);
-
+	void PlayerDodge(float DodgeDistance);
 	void PlayerIsDodging();
 
+	//Player Aim
 	UFUNCTION(BlueprintCallable)
 	void PlayerAim(float LookUpDownInput, float LookLeftRightInput);
+
+	//Player Fast Punch
+	UFUNCTION(BlueprintCallable)
+	void PlayerFastPunch(float PunchDistance);
+	void PlayerIsFastPunching();
+
+	//Player Heavy Punch
+	UFUNCTION(BlueprintCallable)
+	void PlayerHeavyPunch(float PunchDistance, float PunchHeight);
+	void PlayerIsHeavyPunching();
 
 };
