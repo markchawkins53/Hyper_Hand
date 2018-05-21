@@ -15,6 +15,11 @@ public:
 	// Sets default values for this pawn's properties
 	APlayerHand();
 
+	UPROPERTY(EditAnywhere)
+	bool IsFastPunching;
+	UPROPERTY(EditAnywhere)
+	bool IsHeavyPunching;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -42,8 +47,6 @@ protected:
 	//Player Punching Variables
 	FVector OrigPunchStart;
 	FVector PunchEndHeight;
-	bool IsFastPunching;
-	bool IsHeavyPunching;
 	bool PullBack;
 	int CurrentPhase;
 

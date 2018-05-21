@@ -104,9 +104,12 @@ void APlayerHand::PlayerIsDodging()
 /*Rotates the Player to the desired direction*/
 void APlayerHand::PlayerAim(float LookUpDownInput, float LookLeftRightInput)
 {
+	if (!CanMove)
+		return;
+
 	FRotator Rotation = GetActorRotation();
 	
-	if (LookUpDownInput != 0 && LookLeftRightInput != 0)
+	if (LookUpDownInput != 0 || LookLeftRightInput != 0)
 	{
 		Rotation.Yaw = FMath::RadiansToDegrees(FMath::Atan2(LookLeftRightInput, -LookUpDownInput));
 		SetActorRotation(Rotation);
