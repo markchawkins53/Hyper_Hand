@@ -109,7 +109,7 @@ void APlayerHand::PlayerAim(float LookUpDownInput, float LookLeftRightInput)
 
 	FRotator Rotation = GetActorRotation();
 	
-	if (LookUpDownInput != 0 || LookLeftRightInput != 0)
+	if (LookUpDownInput != 0 && LookLeftRightInput != 0)
 	{
 		Rotation.Yaw = FMath::RadiansToDegrees(FMath::Atan2(LookLeftRightInput, -LookUpDownInput));
 		SetActorRotation(Rotation);
@@ -145,7 +145,7 @@ void APlayerHand::PlayerIsFastPunching()
 	{
 		SetActorLocation(FMath::Lerp(GetActorLocation(), OrigPunchStart, .35f));
 
-		if (FVector::Dist(GetActorLocation(), OrigPunchStart) <= 10.0f)
+		if (FVector::Dist(GetActorLocation(), OrigPunchStart) <= 250.0f)
 		{
 			IsFastPunching = PullBack = false;
 			CanMove = true;
